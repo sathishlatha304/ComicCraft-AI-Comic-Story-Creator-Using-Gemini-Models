@@ -1,0 +1,387 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Comic Craft AI</title>
+<style>
+* {
+  box-sizing: border-box;
+}
+body {
+  margin: 0;
+  font-family: Arial, sans-serif;
+  background: #eef4fc;
+  color: #172b4d;
+}
+header {
+  background: #102442;
+  color: white;
+  padding: 22px 30px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+header h1 {
+  margin: 0;
+  font-size: 30px;
+}
+header p {
+  margin-bottom: 0;
+  color: #c8d9f7;
+}
+.container {
+  display: grid;
+  grid-template-columns: 230px 1fr;
+  min-height: calc(100vh - 100px);
+}
+.sidebar {
+  background: #102442;
+  color: white;
+  padding: 25px 15px;
+}
+.sidebar button {
+  width: 100%;
+  padding: 14px;
+  margin-bottom: 12px;
+  background: transparent;
+  border: 0;
+  color: white;
+  text-align: left;
+  font-size: 16px;
+  cursor: pointer;
+  border-radius: 8px;
+}
+.sidebar button:hover,
+.sidebar button.active {
+  background: #1765d8;
+}
+main {
+  display: grid;
+  grid-template-columns: minmax(300px, 0.9fr) 1.1fr;
+  gap: 20px;
+  padding: 25px;
+}
+.card {
+  background: white;
+  border: 1px solid #d5e1f2;
+  border-radius: 12px;
+  padding: 20px;
+  box-shadow: 0 3px 12px #1024420c;
+  min-width: 0;
+}
+h2 {
+  margin-top: 0;
+}
+label {
+  display: block;
+  font-weight: bold;
+  margin: 17px 0 8px;
+}
+textarea, input, select {
+  width: 100%;
+  padding: 12px;
+  border: 1px solid #b8cbea;
+  border-radius: 8px;
+  font-size: 15px;
+  background: white;
+}
+textarea {
+  min-height: 130px;
+  resize: vertical;
+}
+button.primary {
+  width: 100%;
+  background: #1765e8;
+  color: white;
+  padding: 14px;
+  border: 0;
+  border-radius: 8px;
+  font-size: 16px;
+  font-weight: bold;
+  cursor: pointer;
+  margin-top: 20px;
+}
+button.primary:disabled {
+  opacity: .6;
+  cursor: wait;
+}
+.panels {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 12px;
+}
+.panel {
+  min-height: 160px;
+  padding: 12px;
+  border: 2px solid #263c58;
+  border-radius: 5px;
+  background: #f1f6ff;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+.panel img {
+  width: 100%;
+  border-radius: 5px;
+}
+.panel strong {
+  color: #1765d8;
+}
+.panel p {
+  margin: 0;
+  line-height: 1.5;
+}
+#status {
+  color: #1765d8;
+  margin-top: 12px;
+}
+.download {
+  background: #e6f0ff;
+  border: 1px solid #b8cbea;
+  border-radius: 7px;
+  padding: 10px;
+  cursor: pointer;
+}
+@media(max-width: 850px) {
+  main {
+    grid-template-columns: 1fr;
+  }
+}
+@media(max-width: 550px) {
+  .container {
+    grid-template-columns: 1fr;
+  }
+  .sidebar {
+    display: flex;
+    overflow-x: auto;
+    padding: 8px;
+  }
+  .sidebar button {
+    min-width: 110px;
+    text-align: center;
+  }
+  main {
+    padding: 12px;
+  }
+  header {
+    padding: 18px;
+  }
+  .panels {
+    grid-template-columns: 1fr;
+  }
+}
+</style>
+</head>
+<body>
+
+<header>
+  <div>
+    <h1>📚 Comic Craft AI</h1>
+    <p>Create amazing comic stories using Gemini AI</p>
+  </div>
+  <strong>✦ Gemini AI</strong>
+</header>
+
+<div class="container">
+  <aside class="sidebar">
+    <button class="active">✏️ Create Comic</button>
+    <button onclick="clearComic()">🗑️ Clear</button>
+    <button onclick="downloadComic()">📥 Download</button>
+  </aside>
+
+  <main>
+    <section class="card">
+      <h2>✨ Create Your Comic Story</h2>
+      <p>Describe your idea and let Gemini bring it to life!</p>
+
+      <label for="prompt">Story Prompt</label>
+      <textarea id="prompt"
+        placeholder="A young boy discovers a magical book..."></textarea>
+
+      <label for="panelsCount">Number of Panels</label>
+      <select id="panelsCount">
+        <option value="4">4 Panels</option>
+        <option value="6" selected>6 Panels</option>
+        <option value="8">8 Panels</option>
+      </select>
+
+      <label for="style">Art Style</label>
+      <select id="style">
+        <option>Cartoon</option>
+        <option>Anime</option>
+        <option>Comic Book</option>
+        <option>Fantasy</option>
+      </select>
+
+      <label for="character">Character Details</label>
+      <input id="character"
+        placeholder="A brave young boy with a blue jacket">
+
+      <button class="primary" id="generate"
+        onclick="generateComic()">✨ Generate Comic</button>
+
+      <p id="status" role="status"></p>
+    </section>
+
+    <section class="card">
+      <h2>🖼️ Generated Comic</h2>
+      <div id="comic" class="panels">
+        <p>Your generated comic panels will appear here.</p>
+      </div>
+      <button class="download" onclick="downloadComic()">
+        📥 Download Story
+      </button>
+    </section>
+  </main>
+</div>
+
+<script>
+const API_KEY = "YOUR_GEMINI_API_KEY";
+const MODEL = "gemini-2.5-flash";
+
+async function generateComic() {
+  const prompt = document.getElementById("prompt").value.trim();
+  const count = Number(document.getElementById("panelsCount").value);
+  const style = document.getElementById("style").value;
+  const character = document.getElementById("character").value;
+  const status = document.getElementById("status");
+  const button = document.getElementById("generate");
+
+  if (!prompt) {
+    status.textContent = "Please enter a story idea.";
+    return;
+  }
+
+  if (API_KEY === "YOUR_GEMINI_API_KEY") {
+    status.textContent = "Please configure your Gemini API key.";
+    return;
+  }
+
+  button.disabled = true;
+  status.textContent = "Gemini is creating your story...";
+  document.getElementById("comic").innerHTML = "";
+
+  const instruction = `
+Create a comic story based on this idea:
+${prompt}
+
+Character details: ${character || "Create suitable characters"}
+Art style: ${style}
+Number of panels: ${count}
+
+Return ONLY valid JSON in this format:
+{
+  "title": "Comic title",
+  "panels": [
+    {
+      "scene": "Visual scene description",
+      "caption": "Narration",
+      "dialogue": "Character dialogue"
+    }
+  ]
+}
+
+Create exactly ${count} panels. Make the story coherent,
+creative, and suitable for all ages.
+`;
+
+  try {
+    const response = await fetch(
+      `https://generativelanguage.googleapis.com/v1beta/models/${MODEL}:generateContent?key=${API_KEY}`,
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify({
+          contents: [{
+            parts: [{ text: instruction }]
+          }],
+          generationConfig: {
+            responseMimeType: "application/json"
+          }
+        })
+      }
+    );
+
+    if (!response.ok) {
+      throw new Error("Gemini API error: " + response.status);
+    }
+
+    const data = await response.json();
+    const text = data.candidates[0].content.parts
+      .map(part => part.text || "")
+      .join("");
+
+    const story = JSON.parse(text);
+    showComic(story);
+    status.textContent = "Comic story generated successfully!";
+  } catch (error) {
+    status.textContent = "Error: " + error.message;
+  } finally {
+    button.disabled = false;
+  }
+}
+
+function showComic(story) {
+  const comic = document.getElementById("comic");
+  comic.innerHTML = "";
+
+  const title = document.createElement("h2");
+  title.textContent = story.title || "My Comic";
+  title.style.gridColumn = "1 / -1";
+  comic.appendChild(title);
+
+  story.panels.forEach((panel, index) => {
+    const box = document.createElement("div");
+    box.className = "panel";
+
+    const number = document.createElement("strong");
+    number.textContent = "Panel " + (index + 1);
+
+    const scene = document.createElement("p");
+    scene.textContent = "🎨 " + panel.scene;
+
+    const caption = document.createElement("p");
+    caption.textContent = "📖 " + panel.caption;
+
+    const dialogue = document.createElement("p");
+    dialogue.textContent = "💬 " + panel.dialogue;
+
+    box.append(number, scene, caption, dialogue);
+    comic.appendChild(box);
+  });
+}
+
+function clearComic() {
+  document.getElementById("prompt").value = "";
+  document.getElementById("character").value = "";
+  document.getElementById("comic").innerHTML =
+    "<p>Your generated comic panels will appear here.</p>";
+  document.getElementById("status").textContent = "";
+}
+
+function downloadComic() {
+  const comic = document.getElementById("comic");
+  const text = comic.innerText.trim();
+
+  if (!text || text.startsWith("Your generated")) {
+    alert("Generate a comic first!");
+    return;
+  }
+
+  const blob = new Blob([text], {
+    type: "text/plain;charset=utf-8"
+  });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement("a");
+  a.href = url;
+  a.download = "my-comic-story.txt";
+  a.click();
+  URL.revokeObjectURL(url);
+}
+</script>
+</body>
+</html>
